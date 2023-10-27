@@ -33,6 +33,7 @@ adminpaths.forEach((adminPath) => {
 const userpaths = [
   { pathUrl: '/register', routeFile: 'register' },
   { pathUrl: '/login', routeFile: 'login' },
+  { pathUrl: '/media', routeFile: 'media' },
 ];
 userpaths.forEach((userPath) => {
   app.use('/user' + userPath.pathUrl, require('./routes/users/' + userPath.routeFile));
