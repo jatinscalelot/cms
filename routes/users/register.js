@@ -38,7 +38,8 @@ router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
                         my_referer_code: my_referer_code_new,
                         referer_code: referer_code,
                         profile_photo: '',
-                        aadhar_card: '',
+                        aadhar_card_front: '',
+                        aadhar_card_back: '',
                         pan_card: '',
                         cheque: '',
                         fcm_token: (fcm_token) ? fcm_token : '',
@@ -65,12 +66,28 @@ router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
                             } else {
                               return responseManager.badrequest({ message: 'Invalid profile image file type only image files allowed, please try again' }, res);
                             }
-                          } else if (file.fieldname == 'aadhar_card') {
+                          } else if (file.fieldname == 'aadhar_card_front') {
                             if (allowedContentTypes.imagearray.includes(file.mimetype)) {
                               let filesizeinMb = parseFloat(parseFloat(file.size) / 1048576);
                               if (filesizeinMb <= parseInt(process.env.ALLOWED_IMAGE_UPLOAD_SIZE)) {
-                                AwsCloud.saveToS3(file.buffer, 'user', file.mimetype, 'aadharcard').then((result) => {
-                                  obj.aadhar_card = result.data.Key;
+                                AwsCloud.saveToS3(file.buffer, 'user', file.mimetype, 'aadharcardfront').then((result) => {
+                                  obj.aadhar_card_front = result.data.Key;
+                                  next_file();
+                                }).catch((error) => {
+                                  return responseManager.onError(error, res);
+                                });
+                              } else {
+                                return responseManager.badrequest({ message: 'Aadhar card Image file must be <= ' + process.env.ALLOWED_IMAGE_UPLOAD_SIZE + ' MB, please try again' }, res);
+                              }
+                            } else {
+                              return responseManager.badrequest({ message: 'Invalid Aadhar card Image file type only image files allowed, please try again' }, res);
+                            }
+                          } else if (file.fieldname == 'aadhar_card_back') {
+                            if (allowedContentTypes.imagearray.includes(file.mimetype)) {
+                              let filesizeinMb = parseFloat(parseFloat(file.size) / 1048576);
+                              if (filesizeinMb <= parseInt(process.env.ALLOWED_IMAGE_UPLOAD_SIZE)) {
+                                AwsCloud.saveToS3(file.buffer, 'user', file.mimetype, 'aadharcardback').then((result) => {
+                                  obj.aadhar_card_back = result.data.Key;
                                   next_file();
                                 }).catch((error) => {
                                   return responseManager.onError(error, res);
@@ -138,7 +155,8 @@ router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
                       my_referer_code: my_referer_code_new,
                       referer_code: referer_code,
                       profile_photo: '',
-                      aadhar_card: '',
+                      aadhar_card_front: '',
+                      aadhar_card_back: '',
                       pan_card: '',
                       cheque: '',
                       fcm_token: (fcm_token) ? fcm_token : '',
@@ -165,12 +183,28 @@ router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
                           } else {
                             return responseManager.badrequest({ message: 'Invalid profile image file type only image files allowed, please try again' }, res);
                           }
-                        } else if (file.fieldname == 'aadhar_card') {
+                        } else if (file.fieldname == 'aadhar_card_front') {
                           if (allowedContentTypes.imagearray.includes(file.mimetype)) {
                             let filesizeinMb = parseFloat(parseFloat(file.size) / 1048576);
                             if (filesizeinMb <= parseInt(process.env.ALLOWED_IMAGE_UPLOAD_SIZE)) {
-                              AwsCloud.saveToS3(file.buffer, 'user', file.mimetype, 'aadharcard').then((result) => {
-                                obj.aadhar_card = result.data.Key;
+                              AwsCloud.saveToS3(file.buffer, 'user', file.mimetype, 'aadharcardfront').then((result) => {
+                                obj.aadhar_card_front = result.data.Key;
+                                next_file();
+                              }).catch((error) => {
+                                return responseManager.onError(error, res);
+                              });
+                            } else {
+                              return responseManager.badrequest({ message: 'Aadhar card Image file must be <= ' + process.env.ALLOWED_IMAGE_UPLOAD_SIZE + ' MB, please try again' }, res);
+                            }
+                          } else {
+                            return responseManager.badrequest({ message: 'Invalid Aadhar card Image file type only image files allowed, please try again' }, res);
+                          }
+                        } else if (file.fieldname == 'aadhar_card_back') {
+                          if (allowedContentTypes.imagearray.includes(file.mimetype)) {
+                            let filesizeinMb = parseFloat(parseFloat(file.size) / 1048576);
+                            if (filesizeinMb <= parseInt(process.env.ALLOWED_IMAGE_UPLOAD_SIZE)) {
+                              AwsCloud.saveToS3(file.buffer, 'user', file.mimetype, 'aadharcardback').then((result) => {
+                                obj.aadhar_card_back = result.data.Key;
                                 next_file();
                               }).catch((error) => {
                                 return responseManager.onError(error, res);
