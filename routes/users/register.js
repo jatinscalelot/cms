@@ -9,6 +9,7 @@ const responseManager = require('../../utilities/response.manager');
 const userModel = require('../../models/users.model');
 const adminModel = require('../../models/admins.model');
 const allowedContentTypes = require('../../utilities/content-types');
+const AwsCloud = require('../../utilities/aws');
 const async = require('async');
 router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
   const { fname, lname, email, mobile, password, referer_code, fcm_token, adminid } = req.body;
@@ -214,7 +215,7 @@ router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
                           }
                         }
                       }, () => {
-                        (async () => {
+                        ( async () => {
                           let newUser = await primary.model(constants.MODELS.users, userModel).create(obj);
                           await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(newUser._id, { channelID: newUser.mobile.toString() + '_' + newUser._id.toString() });
                           let newuser = await primary.model(constants.MODELS.users, userModel).findById(newUser._id).lean();
