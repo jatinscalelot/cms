@@ -12,7 +12,6 @@ const cardModel = require('../../models/cards.model');
 const allowedContentTypes = require('../../utilities/content-types');
 const AwsCloud = require('../../utilities/aws');
 const async = require('async');
-const mongoose = require('mongoose');
 router.post('/save', helper.authenticateToken, fileHelper.memoryUpload.any(), async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
