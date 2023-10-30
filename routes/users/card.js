@@ -162,7 +162,7 @@ router.post('/', helper.authenticateToken, async (req, res) => {
         let userdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).lean();
         if (userdata && userdata.is_approved && userdata.is_approved == true) {
             await primary.model(constants.MODELS.cards, cardModel).paginate({
-                userid : mongoose.Types.ObjectId(req.token.userid)
+                userid : new mongoose.Types.ObjectId(req.token.userid)
             },{
                 page,
                 limit: parseInt(limit),
