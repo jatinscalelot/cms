@@ -4,13 +4,11 @@ const mongoose = require('mongoose');
 const mongoConnection = require('../../utilities/connections');
 const constants = require('../../utilities/constants');
 const helper = require('../../utilities/helper');
-// const fileHelper = require('../../utilities/multer.functions');
+const fileHelper = require('../../utilities/multer.functions');
 const responseManager = require('../../utilities/response.manager');
 const userModel = require('../../models/users.model');
 const adminModel = require('../../models/admins.model');
-const multer = require('multer');
-var upload = multer();
-router.post('/', upload.array('files', 4), async (req, res) => {
+router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
   console.log(req.files);
   //const { fname, lname, email, mobile, password, referer_code, profile_photo, aadhar_card, pan_card, cheque, fcm_token, adminid } = req.body;
   // if (fname && fname.trim() != '') {
