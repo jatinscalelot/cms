@@ -37,6 +37,10 @@ let schema = new mongoose.Schema({
         type: String,
 		require: true
     },
+	due_date_timestamp : {
+		type: Number,
+		require: true,
+	},
     due_date : {
         type: String,
 		require: true,
