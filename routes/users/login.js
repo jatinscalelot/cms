@@ -6,6 +6,8 @@ const responseManager = require('../../utilities/response.manager');
 const userModel = require('../../models/users.model');
 const router = express.Router();
 router.post('/', async (req, res) => {
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   const { email_mobile, password } = req.body;
   if (email_mobile && email_mobile.trim() != '' && (helper.validateEmail(email_mobile) || helper.validateMobile(email_mobile)) && password && password.trim() != '') {
     let primary = mongoConnection.useDb(constants.DEFAULT_DB);

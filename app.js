@@ -1,4 +1,5 @@
 const dotenv = require('dotenv').config();
+const cors = require('cors');
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 mongoose.set('runValidators', true);
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.MONGO_URI, {
@@ -26,6 +28,8 @@ mongoose.connection.once('open', () => {
 });
 const adminpaths = [
   { pathUrl: '/login', routeFile: 'login' },
+  { pathUrl: '/updatepassword', routeFile: 'updatepassword'},
+
   { pathUrl: '/test', routeFile: 'test'},
 ]
 adminpaths.forEach((adminPath) => {

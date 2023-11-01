@@ -12,6 +12,7 @@ const allowedContentTypes = require('../../utilities/content-types');
 const AwsCloud = require('../../utilities/aws');
 const async = require('async');
 router.get('/', helper.authenticateToken, async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         let primary = mongoConnection.useDb(constants.DEFAULT_DB);
@@ -26,6 +27,7 @@ router.get('/', helper.authenticateToken, async (req, res) => {
     }
 });
 router.post('/', helper.authenticateToken, fileHelper.memoryUpload.single('profile'), async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         let primary = mongoConnection.useDb(constants.DEFAULT_DB);
@@ -95,6 +97,7 @@ router.post('/', helper.authenticateToken, fileHelper.memoryUpload.single('profi
     }
 });
 router.post('/updatepassword', helper.authenticateToken, async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         let primary = mongoConnection.useDb(constants.DEFAULT_DB);

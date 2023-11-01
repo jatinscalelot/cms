@@ -5,6 +5,7 @@ const fileHelper = require('../../utilities/multer.functions');
 const allowedContentTypes = require('../../utilities/content-types');
 const AwsCloud = require('../../utilities/aws');
 router.post('/profile', fileHelper.memoryUpload.single('profile'), async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.file) {
         if (allowedContentTypes.imagearray.includes(req.file.mimetype)) {
@@ -30,6 +31,7 @@ router.post('/profile', fileHelper.memoryUpload.single('profile'), async (req, r
     }
 });
 router.post('/aadharcard', fileHelper.memoryUpload.single('aadharcard'), async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.file) {
         if (allowedContentTypes.imagearray.includes(req.file.mimetype)) {
@@ -55,6 +57,7 @@ router.post('/aadharcard', fileHelper.memoryUpload.single('aadharcard'), async (
     }
 });
 router.post('/pancard', fileHelper.memoryUpload.single('pancard'), async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.file) {
         if (allowedContentTypes.imagearray.includes(req.file.mimetype)) {
@@ -80,6 +83,7 @@ router.post('/pancard', fileHelper.memoryUpload.single('pancard'), async (req, r
     }
 });
 router.post('/cheque', fileHelper.memoryUpload.single('cheque'), async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.file) {
         if (allowedContentTypes.imagearray.includes(req.file.mimetype)) {

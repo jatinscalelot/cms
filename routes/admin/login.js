@@ -6,6 +6,8 @@ const adminModel = require('../../models/admins.model');
 const helper = require('../../utilities/helper');
 const responseManager = require('../../utilities/response.manager');
 router.post('/' , async (req , res) => {
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   const { email_mobile , password } = req.body;
   if(email_mobile && email_mobile.trim() != '' && password && password.trim() != ''){
     let primary = mongoConnection.useDb(constants.DEFAULT_DB);

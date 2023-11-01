@@ -39,6 +39,7 @@ async function validateDate(d) {
     }
 };
 router.post('/save', helper.authenticateToken, fileHelper.memoryUpload.any(), async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         const { cardid, bank_name, purpose, card_type, card_number, card_holder, expiry_date, cvv } = req.body;
@@ -210,6 +211,7 @@ router.post('/save', helper.authenticateToken, fileHelper.memoryUpload.any(), as
     }
 });
 router.post('/', helper.authenticateToken, async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         const { page, limit } = req.body;
@@ -248,6 +250,7 @@ router.post('/', helper.authenticateToken, async (req, res) => {
     }
 });
 router.post('/getone', helper.authenticateToken, async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         const { cardid } = req.body;
@@ -275,6 +278,7 @@ router.post('/getone', helper.authenticateToken, async (req, res) => {
     }
 });
 router.post('/dueupdate', helper.authenticateToken, async (req, res) => {
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         const { cardid, due_date, due_amount } = req.body;

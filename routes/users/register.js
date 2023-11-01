@@ -12,6 +12,8 @@ const allowedContentTypes = require('../../utilities/content-types');
 const AwsCloud = require('../../utilities/aws');
 const async = require('async');
 router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   const { fname, lname, email, mobile, password, referer_code, fcm_token, adminid } = req.body;
   if (fname && fname.trim() != '') {
     if (lname && lname.trim() != '') {
