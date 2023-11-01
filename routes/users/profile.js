@@ -11,7 +11,7 @@ const adminModel = require('../../models/admins.model');
 const allowedContentTypes = require('../../utilities/content-types');
 const AwsCloud = require('../../utilities/aws');
 const async = require('async');
-router.get('/', async (req, res) => {
+router.get('/', helper.authenticateToken, async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         let primary = mongoConnection.useDb(constants.DEFAULT_DB);
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
         return responseManager.badrequest({ message: 'Invalid token to get profile details, please try again' }, res);
     }
 });
-router.post('/', fileHelper.memoryUpload.single('profile'), async (req, res) => {
+router.post('/', helper.authenticateToken, fileHelper.memoryUpload.single('profile'), async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         let primary = mongoConnection.useDb(constants.DEFAULT_DB);
@@ -93,5 +93,8 @@ router.post('/', fileHelper.memoryUpload.single('profile'), async (req, res) => 
     } else {
         return responseManager.badrequest({ message: 'Invalid token to get update user data, please try again' }, res);
     }
+});
+router.post('/updatepassword', helper.authenticateToken, async (req, res) => {
+
 });
 module.exports = router;
