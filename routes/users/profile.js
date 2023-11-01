@@ -42,13 +42,13 @@ router.post('/', helper.authenticateToken, fileHelper.memoryUpload.single('profi
                                     if (filesizeinMb <= parseInt(process.env.ALLOWED_IMAGE_UPLOAD_SIZE)) {
                                         AwsCloud.saveToS3(req.file.buffer, 'user', req.file.mimetype, 'profile').then((result) => {
                                             profilePic = result.data.Key;
-                                            ( async () => {
-                                                if(userdata.mobile == mobile){
-                                                    await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, {fname : fname, lname : lname, email : email, profile_photo : result.data.Key });
+                                            (async () => {
+                                                if (userdata.mobile == mobile) {
+                                                    await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, { fname: fname, lname: lname, email: email, profile_photo: result.data.Key });
                                                     let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
                                                     return responseManager.onSuccess('User profile updated successfully...!', finaluserdata, res);
-                                                }else{
-                                                    await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, {fname : fname, lname : lname, email : email, mobile : mobile, profile_photo : result.data.Key, channelID : mobile+'_'+req.token.userid.toString() });
+                                                } else {
+                                                    await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, { fname: fname, lname: lname, email: email, mobile: mobile, profile_photo: result.data.Key, channelID: mobile + '_' + req.token.userid.toString() });
                                                     let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
                                                     return responseManager.onSuccess('User profile updated successfully...!', finaluserdata, res);
                                                 }
@@ -58,19 +58,19 @@ router.post('/', helper.authenticateToken, fileHelper.memoryUpload.single('profi
                                         }).catch((error) => {
                                             return responseManager.onError(error, res);
                                         });
-                                    }else{
-                                        return responseManager.badrequest({ message: 'Image file must be <= '+process.env.ALLOWED_IMAGE_UPLOAD_SIZE+' MB, please try again' }, res);
+                                    } else {
+                                        return responseManager.badrequest({ message: 'Image file must be <= ' + process.env.ALLOWED_IMAGE_UPLOAD_SIZE + ' MB, please try again' }, res);
                                     }
-                                }else{
+                                } else {
                                     return responseManager.badrequest({ message: 'Invalid file type only image files allowed, please try again' }, res);
                                 }
-                            }else{
-                                if(userdata.mobile == mobile){
-                                    await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, {fname : fname, lname : lname, email : email });
+                            } else {
+                                if (userdata.mobile == mobile) {
+                                    await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, { fname: fname, lname: lname, email: email });
                                     let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
                                     return responseManager.onSuccess('User profile updated successfully...!', finaluserdata, res);
-                                }else{
-                                    await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, {fname : fname, lname : lname, email : email, mobile : mobile, channelID : mobile+'_'+req.token.userid.toString() });
+                                } else {
+                                    await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, { fname: fname, lname: lname, email: email, mobile: mobile, channelID: mobile + '_' + req.token.userid.toString() });
                                     let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
                                     return responseManager.onSuccess('User profile updated successfully...!', finaluserdata, res);
                                 }
@@ -95,6 +95,33 @@ router.post('/', helper.authenticateToken, fileHelper.memoryUpload.single('profi
     }
 });
 router.post('/updatepassword', helper.authenticateToken, async (req, res) => {
-
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
+        let primary = mongoConnection.useDb(constants.DEFAULT_DB);
+        let userdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-referer_code -adminid").lean();
+        if (userdata && userdata.is_approved && userdata.is_approved == true) {
+            const { old_password, new_password } = req.body;
+            if (old_password && old_password != '' && old_password.length >= 6) {
+                if (new_password && new_password != '' && new_password.length >= 6) {
+                    let oldpass = await helper.passwordDecryptor(userdata.password);
+                    if (oldpass == old_password) {
+                        let newEncpass = await helper.passwordEncryptor(new_password);
+                        await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, {password : newEncpass});
+                        return responseManager.onSuccess('User password updated successfully...!', 1, res);
+                    } else {
+                        return responseManager.badrequest({ message: 'Invalid old password to update user password, please try again' }, res);
+                    }
+                } else {
+                    return responseManager.badrequest({ message: 'Invalid new password, password must be >= 6 chars to update user password, please try again' }, res);
+                }
+            } else {
+                return responseManager.badrequest({ message: 'Invalid old password to update user password, please try again' }, res);
+            }
+        } else {
+            return responseManager.badrequest({ message: 'User as not approved yet, to update user password please contact admin and get your user approved' }, res);
+        }
+    } else {
+        return responseManager.badrequest({ message: 'Invalid token to update user password, please try again' }, res);
+    }
 });
 module.exports = router;
