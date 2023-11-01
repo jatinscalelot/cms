@@ -26,6 +26,7 @@ mongoose.connection.once('open', () => {
 });
 const adminpaths = [
   { pathUrl: '/login', routeFile: 'login' },
+  { pathUrl: '/test', routeFile: 'test'},
 ]
 adminpaths.forEach((adminPath) => {
   app.use('/admin' + adminPath.pathUrl, require('./routes/admin/' + adminPath.routeFile));
