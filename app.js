@@ -29,7 +29,7 @@ mongoose.connection.once('open', () => {
 const adminpaths = [
   { pathUrl: '/login', routeFile: 'login' },
   { pathUrl: '/updatepassword', routeFile: 'updatepassword'},
-
+  { pathUrl: '/user', routeFile: 'user'},
   { pathUrl: '/test', routeFile: 'test'},
 ]
 adminpaths.forEach((adminPath) => {

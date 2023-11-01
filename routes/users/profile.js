@@ -16,7 +16,7 @@ router.get('/', helper.authenticateToken, async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         let primary = mongoConnection.useDb(constants.DEFAULT_DB);
-        let userdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
+        let userdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid -commission").lean();
         if (userdata && userdata.is_approved && userdata.is_approved == true) {
             return responseManager.onSuccess('User profile...!', userdata, res);
         } else {
@@ -31,7 +31,7 @@ router.post('/', helper.authenticateToken, fileHelper.memoryUpload.single('profi
     res.setHeader('Access-Control-Allow-Origin', '*');
     if (req.token.userid && mongoose.Types.ObjectId.isValid(req.token.userid)) {
         let primary = mongoConnection.useDb(constants.DEFAULT_DB);
-        let userdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
+        let userdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid -commission").lean();
         if (userdata && userdata.is_approved && userdata.is_approved == true) {
             const { fname, lname, email, mobile } = req.body;
             if (fname && fname.trim() != '') {
@@ -47,11 +47,11 @@ router.post('/', helper.authenticateToken, fileHelper.memoryUpload.single('profi
                                             (async () => {
                                                 if (userdata.mobile == mobile) {
                                                     await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, { fname: fname, lname: lname, email: email, profile_photo: result.data.Key });
-                                                    let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
+                                                    let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid -commission").lean();
                                                     return responseManager.onSuccess('User profile updated successfully...!', finaluserdata, res);
                                                 } else {
                                                     await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, { fname: fname, lname: lname, email: email, mobile: mobile, profile_photo: result.data.Key, channelID: mobile + '_' + req.token.userid.toString() });
-                                                    let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
+                                                    let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid -commission").lean();
                                                     return responseManager.onSuccess('User profile updated successfully...!', finaluserdata, res);
                                                 }
                                             })().catch((error) => {
@@ -69,11 +69,11 @@ router.post('/', helper.authenticateToken, fileHelper.memoryUpload.single('profi
                             } else {
                                 if (userdata.mobile == mobile) {
                                     await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, { fname: fname, lname: lname, email: email });
-                                    let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
+                                    let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid -commission").lean();
                                     return responseManager.onSuccess('User profile updated successfully...!', finaluserdata, res);
                                 } else {
                                     await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(req.token.userid, { fname: fname, lname: lname, email: email, mobile: mobile, channelID: mobile + '_' + req.token.userid.toString() });
-                                    let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid").lean();
+                                    let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(req.token.userid).select("-password -referer_code -adminid -commission").lean();
                                     return responseManager.onSuccess('User profile updated successfully...!', finaluserdata, res);
                                 }
                             }

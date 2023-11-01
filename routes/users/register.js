@@ -44,6 +44,7 @@ router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
                         aadhar_card_back: '',
                         pan_card: '',
                         cheque: '',
+                        commission: 0.0,
                         fcm_token: (fcm_token) ? fcm_token : '',
                         is_approved: false,
                         adminid: new mongoose.Types.ObjectId(adminid),
@@ -137,7 +138,7 @@ router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
                           (async () => {
                             let newUser = await primary.model(constants.MODELS.users, userModel).create(obj);
                             await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(newUser._id, { channelID: newUser.mobile.toString() + '_' + newUser._id.toString() });
-                            let newuser = await primary.model(constants.MODELS.users, userModel).findById(newUser._id).lean();
+                            let newuser = await primary.model(constants.MODELS.users, userModel).findById(newUser._id).select("-password -referer_code -adminid -commission").lean();
                             return responseManager.onSuccess('User register successfully...!', newuser, res);
                           })().catch((error) => { });
                         });
@@ -161,6 +162,7 @@ router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
                       aadhar_card_back: '',
                       pan_card: '',
                       cheque: '',
+                      commission: 0.0,
                       fcm_token: (fcm_token) ? fcm_token : '',
                       is_approved: false,
                       adminid: new mongoose.Types.ObjectId(adminid),
@@ -254,7 +256,7 @@ router.post('/', fileHelper.memoryUpload.any(), async (req, res) => {
                         ( async () => {
                           let newUser = await primary.model(constants.MODELS.users, userModel).create(obj);
                           await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(newUser._id, { channelID: newUser.mobile.toString() + '_' + newUser._id.toString() });
-                          let newuser = await primary.model(constants.MODELS.users, userModel).findById(newUser._id).lean();
+                          let newuser = await primary.model(constants.MODELS.users, userModel).findById(newUser._id).select("-password -referer_code -adminid -commission").lean();
                           return responseManager.onSuccess('User register successfully...!', newuser, res);
                         })().catch((error) => { });
                       });

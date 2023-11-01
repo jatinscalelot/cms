@@ -61,6 +61,11 @@ let schema = new mongoose.Schema({
 		require: false,
 		default : ''
 	},
+	commission : {
+		type: Number,
+		require: true,
+		default : 0.0
+	},
 	adminid : {
 		type: mongoose.Types.ObjectId,
 		require : true
