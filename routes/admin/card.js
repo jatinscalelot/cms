@@ -52,7 +52,6 @@ router.post('/save', helper.authenticateToken, fileHelper.memoryUpload.any(), as
                     if (bank_name && bank_name != '') {
                         if (purpose && purpose != '') {
                             if (card_type && card_type != '') {
-                                
                                 if (card_number && card_number != '' && card_number.length == 16) {
                                     if (card_holder && card_holder != '') {
                                         if (expiry_date && expiry_date != '' && validateDate(expiry_date)) {
