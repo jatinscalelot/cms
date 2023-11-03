@@ -41,7 +41,8 @@ const userpaths = [
   { pathUrl: '/login', routeFile: 'login' },
   { pathUrl: '/media', routeFile: 'media' },
   { pathUrl: '/card', routeFile: 'card'},
-  { pathUrl: '/profile', routeFile: 'profile'}
+  { pathUrl: '/profile', routeFile: 'profile'},
+  { pathUrl: '/dashboard', routeFile: 'dashboard'}
 ];
 userpaths.forEach((userPath) => {
   app.use('/user' + userPath.pathUrl, require('./routes/users/' + userPath.routeFile));
