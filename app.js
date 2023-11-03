@@ -30,6 +30,7 @@ const adminpaths = [
   { pathUrl: '/login', routeFile: 'login' },
   { pathUrl: '/updatepassword', routeFile: 'updatepassword'},
   { pathUrl: '/user', routeFile: 'user'},
+  { pathUrl: '/card', routeFile: 'card'},
   { pathUrl: '/test', routeFile: 'test'},
 ]
 adminpaths.forEach((adminPath) => {

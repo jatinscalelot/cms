@@ -57,7 +57,7 @@ router.post('/approve', helper.authenticateToken, async (req, res) => {
             if (userid && userid != '' && mongoose.Types.ObjectId.isValid(userid)) {
                 let userdata = await primary.model(constants.MODELS.users, userModel).findById(userid).lean();
                 if (userdata && userdata.is_approved == false && userdata.adminid.toString() == req.token.adminid.toString()) {
-                    if (commission && commission != '' && !isNaN(commission) && parseFloat(commission) > 0) {
+                    if (commission && commission != '' && !isNaN(commission) && parseFloat(commission) > 0 && parseFloat(commission) < 100) {
                         await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(userid, { is_approved: true, commission: parseFloat(commission) });
                         let finaluserdata = await primary.model(constants.MODELS.users, userModel).findById(userid).lean();
                         return responseManager.onSuccess('User approved successfully...!', finaluserdata, res);
@@ -231,7 +231,9 @@ router.post('/save', helper.authenticateToken, fileHelper.memoryUpload.any(), as
                                                     await primary.model(constants.MODELS.users, userModel).findByIdAndUpdate(newUser._id, { channelID: newUser.mobile.toString() + '_' + newUser._id.toString() });
                                                     let newuser = await primary.model(constants.MODELS.users, userModel).findById(newUser._id).select("-password").lean();
                                                     return responseManager.onSuccess('User created successfully...!', newuser, res);
-                                                })().catch((error) => { });
+                                                })().catch((error) => {
+                                                    return responseManager.onError(error, res);
+                                                });
                                             });
                                         } else {
                                             return responseManager.badrequest({ message: 'Please upload Profile photo Aadhar card PAN card and cheque photos..., Please try again...!' }, res);
