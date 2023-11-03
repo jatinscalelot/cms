@@ -7,6 +7,7 @@ let schema = new mongoose.Schema({
 	},
 	purpose : {
 		type: String,
+        enum: ['Business', 'Personal'],
 		require: true
 	},
 	card_type: {
