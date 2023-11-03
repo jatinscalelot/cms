@@ -28,7 +28,7 @@ router.post('/', helper.authenticateToken, async (req, res) => {
                     { my_referer_code: { '$regex': new RegExp(search, "i") } },
                     { referer_code: { '$regex': new RegExp(search, "i") } }
                 ],
-                adminid: mongoose.Types.ObjectId(req.token.adminid)
+                adminid: new mongoose.Types.ObjectId(req.token.adminid)
             }, {
                 page,
                 limit: parseInt(limit),
