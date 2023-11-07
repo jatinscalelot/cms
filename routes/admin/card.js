@@ -238,15 +238,60 @@ router.post('/', helper.authenticateToken, async (req, res) => {
         let primary = mongoConnection.useDb(constants.DEFAULT_DB);
         let admindata = await primary.model(constants.MODELS.admins, adminModel).findById(req.token.adminid).lean();
         if (admindata) {
-            const { userid, page, limit } = req.body;
-            let userdata = await primary.model(constants.MODELS.users, userModel).findById(userid).lean();
-            if (userdata && userdata.is_approved && userdata.is_approved == true && userdata.adminid.toString() == req.token.adminid.toString()) {
+            const { userid, page, limit, search } = req.body;
+            if (userid && userid != '' && mongoose.Types.ObjectId.isValid(userid)) {
+                let userdata = await primary.model(constants.MODELS.users, userModel).findById(userid).lean();
+                if (userdata && userdata.is_approved && userdata.is_approved == true && userdata.adminid.toString() == req.token.adminid.toString()) {
+                    await primary.model(constants.MODELS.cards, cardModel).paginate({
+                        $or: [
+                            { bank_name: { '$regex': new RegExp(search, "i") } },
+                            { purpose: { '$regex': new RegExp(search, "i") } },
+                            { card_type: { '$regex': new RegExp(search, "i") } },
+                            { card_holder: { '$regex': new RegExp(search, "i") } }
+                        ],
+                        userid: new mongoose.Types.ObjectId(userid)
+                    }, {
+                        page,
+                        limit: parseInt(limit),
+                        sort: { timestamp: -1 },
+                        lean: true
+                    }).then((cardlist) => {
+                        let allCards = [];
+                        async.forEachSeries(cardlist.docs, (card, next_card) => {
+                            (async () => {
+                                card.card_number = await helper.passwordDecryptor(card.card_number);
+                                card.expiry_date = await helper.passwordDecryptor(card.expiry_date);
+                                card.cvv = await helper.passwordDecryptor(card.cvv);
+                                allCards.push(card);
+                                next_card();
+                            })().catch((error) => { });
+                        }, () => {
+                            cardlist.docs = allCards;
+                            return responseManager.onSuccess('Card list...!', cardlist, res);
+                        });
+                    }).catch((error) => {
+                        return responseManager.onError(error, res);
+                    });
+                } else {
+                    return responseManager.badrequest({ message: 'Invalid user id to get card list, please try again' }, res);
+                }
+            }else{
                 await primary.model(constants.MODELS.cards, cardModel).paginate({
-                    userid: new mongoose.Types.ObjectId(userid)
+                    $or: [
+                        { bank_name: { '$regex': new RegExp(search, "i") } },
+                        { purpose: { '$regex': new RegExp(search, "i") } },
+                        { card_type: { '$regex': new RegExp(search, "i") } },
+                        { card_holder: { '$regex': new RegExp(search, "i") } }
+                    ],
                 }, {
                     page,
                     limit: parseInt(limit),
                     sort: { timestamp: -1 },
+                    populate: {
+                        path: "userid",
+                        model: primary.model(constants.MODELS.users, userModel),
+                        select: 'fname lname email mobile profile_photo'
+                    },
                     lean: true
                 }).then((cardlist) => {
                     let allCards = [];
@@ -265,8 +310,6 @@ router.post('/', helper.authenticateToken, async (req, res) => {
                 }).catch((error) => {
                     return responseManager.onError(error, res);
                 });
-            } else {
-                return responseManager.badrequest({ message: 'Invalid user id to get card list, please try again' }, res);
             }
         } else {
             return responseManager.badrequest({ message: 'Invalid token to get card list, please try again' }, res);
